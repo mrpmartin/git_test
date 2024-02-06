@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Add some basic styling for better appearance */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+        #output {
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+    </style>
+    <title>JSON Parser</title>
+</head>
+<body>
+    <h2>JSON Parser</h2>
+
+    <!-- Textarea for entering JSON code -->
+    <label for="jsonInput">Enter JSON Code:</label>
+    <textarea id="jsonInput" placeholder="Paste your JSON array here..."></textarea>
+
+    <!-- Button to trigger the parsing -->
+    <button onclick="parseJSON()">Parse JSON</button>
+
+    <!-- Output area for displaying parsed data -->
+    <div id="output"></div>
+
+    <script>
+        function parseJSON() {
+            // Get the JSON code from the textarea
+            const jsonCode = document.getElementById('jsonInput').value;
+
+            // Replace => with :
+            const modifiedJSON = jsonCode.replace(/"=>"/g, '": "').replace(/"=>/g, '": ');
+
+            try {
+                // Attempt to parse the JSON code
+                const parsedData = JSON.parse(modifiedJSON);
+
+                // Ensure the parsed data is an array
+                const dataArray = Array.isArray(parsedData) ? parsedData : [parsedData];
+
+                // Output the parsed data in a readable format
+                document.getElementById('output').innerText = getReadableFormat(dataArray);
+            } catch (error) {
+                // Handle parsing errors
+                document.getElementById('output').innerText = `Error: ${error.message}`;
+            }
+        }
+
+        function getReadableFormat(data) {
+            // Function to format the data for display
+            let result = '';
+
+            // Iterate over each configuration in the array
+            for (const config of data) {
+                result += getConfigDetails(config);
+            }
+
+            return result;
+        }
+
+        function getConfigDetails(config) {
+            // Function to get details of a configuration
+            let tripTypeInside = "Unknown classification";
+            let tripTypeOutside = "Unknown classification";
+
+            // Check the values of Trip type inside hours and Trip type outside hours
+            if (config.trip_type_inside_hours === 1) {
+                tripTypeInside = "Business classification";
+            } else if (config.trip_type_inside_hours === 2) {
+                tripTypeInside = "Personal classification";
+            }
+
+            if (config.trip_type_outside_hours === 1) {
+                tripTypeOutside = "Business classification";
+            } else if (config.trip_type_outside_hours === 2) {
+                tripTypeOutside = "Personal classification";
+            }
+
+            return `Same hours every day: ${config.same_hours_every_day}\n` +
+                `Enable auto tracking outside hours: ${config.enable_auto_tracking_outside_hours}\n` +
+                `Trip type inside hours: ${tripTypeInside}\n` +
+                `Trip type outside hours: ${tripTypeOutside}\n` +
+                `Hours: ${JSON.stringify(config.hours)}\n` +
+                `Enabled days: ${JSON.stringify(config.enabled_days)}\n` +
+                `Week schedule: ${JSON.stringify(config.week_schedule, null, 4)}\n` +
+                '----\n';
+        }
+    </script>
+</body>
+</html>
