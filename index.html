@@ -70,24 +70,11 @@
 
         function getConfigDetails(config) {
             // Function to get details of a configuration
-            let tripTypeInside = "Unknown classification";
-            let tripTypeOutside = "Unknown classification";
+            let tripTypeInside = config.trip_type_inside_hours === 1 ? 'Business classification' : 'Personal classification';
+            let tripTypeOutside = config.trip_type_outside_hours === 1 ? 'Business classification' : 'Personal classification';
 
-            // Check the values of Trip type inside hours and Trip type outside hours
-            if (config.trip_type_inside_hours === 1) {
-                tripTypeInside = "Business classification";
-            } else if (config.trip_type_inside_hours === 2) {
-                tripTypeInside = "Personal classification";
-            }
-
-            if (config.trip_type_outside_hours === 1) {
-                tripTypeOutside = "Business classification";
-            } else if (config.trip_type_outside_hours === 2) {
-                tripTypeOutside = "Personal classification";
-            }
-
-            return `Same hours every day: ${config.same_hours_every_day}\n` +
-                `Enable auto tracking outside hours: ${config.enable_auto_tracking_outside_hours}\n` +
+            return `Same hours every day: ${config.same_hours_every_day ? 'Yes' : 'No'}\n` +
+                `Enable auto tracking outside hours: ${config.enable_auto_tracking_outside_hours ? 'Yes' : 'No'}\n` +
                 `Trip type inside hours: ${tripTypeInside}\n` +
                 `Trip type outside hours: ${tripTypeOutside}\n` +
                 `Hours: ${JSON.stringify(config.hours)}\n` +
